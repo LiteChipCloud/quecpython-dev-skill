@@ -89,6 +89,49 @@ python scripts/device_smoke_test.py --help
 4. 关键变更后执行 smoke 或 soak
 5. 按 `references/commercial-readiness.md` 做交付门禁
 
+## 推荐组合：SSH 跨电脑联调（Mac -> Windows -> 设备）
+
+在实际研发中，推荐将本 Skill 与 `windows-ssh-control` 组合使用，形成跨机协同链路：
+
+1. 本机（Mac）负责代码生成、规则检查、流程编排
+2. Windows 机器负责串口工具链、设备刷写/运行、日志采集
+3. 通过 SSH 做远程命令执行与文件传输，实现“本机统一指挥，远端设备执行”
+
+典型流程：
+
+1. 在 Mac 生成/校验 QuecPython 代码（本 Skill）
+2. 通过 SSH 下发代码到 Windows 工作目录
+3. 由 Windows 执行设备部署、运行、日志回传
+4. 将日志和 JSON 报告回传到 Mac 做归档与判定
+
+建议命令编排：
+
+```bash
+# 1) 本机先做兼容性检查
+python scripts/check_quecpython_compat.py code/
+
+# 2) 通过 SSH 在 Windows 执行设备巡检（示意）
+./win-ssh.sh ps "python D:/work/quecpython-dev/scripts/device_smoke_test.py --risk-mode safe --auto-ports --json"
+
+# 3) 回传报告到本机（示意）
+./win-ssh.sh copy-from "D:/work/report/device-smoke.json" ./review/device-smoke.json
+```
+
+## MCP 与 Skill 协同建议
+
+建议在 Codex 中同时启用：
+
+1. `github` MCP：用于仓库、Issue、Release 与版本治理
+2. `windows-ssh-control` Skill：用于跨机执行与设备链路接管
+3. `quecpython-dev` Skill：用于业务代码与设备流程能力
+
+职责分工：
+
+1. Skill 负责“怎么做”（流程、脚本、规范）
+2. MCP 负责“在哪里做”（远程平台、仓库系统、自动化通道）
+
+这样可以把“代码实现、设备操作、版本发布”整合成闭环。
+
 ## 脚本清单（按职责分组）
 
 ### A. 规则与能力判断
@@ -147,6 +190,23 @@ python scripts/device_smoke_test.py --help
 1. 刷写、强制进程处理、qpycom 高风险操作必须显式确认后执行
 2. 不要在无端口确认、无版本确认情况下执行 destructive 操作
 3. 生产放行必须结合人工复核，不以单脚本成功作为唯一依据
+
+## 常见问题（FAQ）
+
+1. 兼容性检查通过是否代表可商用上线？
+   不是。兼容性检查仅覆盖代码层风险，仍需结合设备实测、网络稳定性、异常恢复、回归验证与人工复核。
+2. 为什么强调 `module + firmware + port` 三元上下文？
+   设备行为与模组型号、固件版本和串口环境强相关，缺少任一要素都会显著降低结论可信度。
+3. 为什么要区分 smoke 与 soak？
+   Smoke 用于快速发现致命问题；Soak 用于长稳与偶发故障识别，二者目标不同，需分层执行。
+4. 远程联调时最小安全策略是什么？
+   默认只读探测优先，执行写操作前二次确认，保留日志与版本证据，出现不确定状态立即停止 destructive 操作。
+
+## 版本路线图（Roadmap）
+
+1. `v0.1.x`：开源基线稳定与文档完善（当前阶段）
+2. `v0.2.x`：补充 CI 校验、脚本参数文档自动生成、示例工程
+3. `v0.3.x`：增强多模组适配策略、报告标准化、发布门禁模板
 
 ## 开源与许可证
 
