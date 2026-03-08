@@ -81,6 +81,21 @@ python scripts/query_module_capability.py --help
 python scripts/device_smoke_test.py --help
 ```
 
+## 使用环境说明
+
+| 运行模式 | 说明 | 推荐度 |
+|---|---|---|
+| Windows 本机模式 | 在同一台 Windows 主机完成代码、工具、设备操作 | 高（单机调试） |
+| Mac/Linux + Windows SSH 模式 | 在 Mac/Linux 编排，通过 SSH 驱动 Windows 工具链与设备 | 高（跨机协同） |
+| CI/无人值守模式 | 在受控环境按固定端口与固定固件执行批处理验证 | 中（需强约束） |
+
+最低建议输入上下文：
+
+1. 模组型号（如 `EC800KCNLC`）
+2. 固件版本（或目标版本）
+3. 设备串口与波特率
+4. 目标路径（如 `/usr/_main.py`）
+
 ### 3. 建议执行顺序
 
 1. 读取 `SKILL.md` 与 `references/core-rules.md`
@@ -88,49 +103,6 @@ python scripts/device_smoke_test.py --help
 3. 再做设备操作（部署/运行/日志）
 4. 关键变更后执行 smoke 或 soak
 5. 按 `references/commercial-readiness.md` 做交付门禁
-
-## 推荐组合：SSH 跨电脑联调（Mac -> Windows -> 设备）
-
-在实际研发中，推荐将本 Skill 与 `windows-ssh-control` 组合使用，形成跨机协同链路：
-
-1. 本机（Mac）负责代码生成、规则检查、流程编排
-2. Windows 机器负责串口工具链、设备刷写/运行、日志采集
-3. 通过 SSH 做远程命令执行与文件传输，实现“本机统一指挥，远端设备执行”
-
-典型流程：
-
-1. 在 Mac 生成/校验 QuecPython 代码（本 Skill）
-2. 通过 SSH 下发代码到 Windows 工作目录
-3. 由 Windows 执行设备部署、运行、日志回传
-4. 将日志和 JSON 报告回传到 Mac 做归档与判定
-
-建议命令编排：
-
-```bash
-# 1) 本机先做兼容性检查
-python scripts/check_quecpython_compat.py code/
-
-# 2) 通过 SSH 在 Windows 执行设备巡检（示意）
-./win-ssh.sh ps "python D:/work/quecpython-dev/scripts/device_smoke_test.py --risk-mode safe --auto-ports --json"
-
-# 3) 回传报告到本机（示意）
-./win-ssh.sh copy-from "D:/work/report/device-smoke.json" ./review/device-smoke.json
-```
-
-## MCP 与 Skill 协同建议
-
-建议在 Codex 中同时启用：
-
-1. `github` MCP：用于仓库、Issue、Release 与版本治理
-2. `windows-ssh-control` Skill：用于跨机执行与设备链路接管
-3. `quecpython-dev` Skill：用于业务代码与设备流程能力
-
-职责分工：
-
-1. Skill 负责“怎么做”（流程、脚本、规范）
-2. MCP 负责“在哪里做”（远程平台、仓库系统、自动化通道）
-
-这样可以把“代码实现、设备操作、版本发布”整合成闭环。
 
 ## 脚本清单（按职责分组）
 
@@ -208,10 +180,73 @@ python scripts/check_quecpython_compat.py code/
 2. `v0.2.x`：补充 CI 校验、脚本参数文档自动生成、示例工程
 3. `v0.3.x`：增强多模组适配策略、报告标准化、发布门禁模板
 
+## 附录 A（推荐）：SSH 跨电脑联调（Mac -> Windows -> 设备）
+
+在实际研发中，推荐将本 Skill 与 `windows-ssh-control` 组合使用，形成跨机协同链路：
+
+1. 本机（Mac）负责代码生成、规则检查、流程编排
+2. Windows 机器负责串口工具链、设备刷写/运行、日志采集
+3. 通过 SSH 做远程命令执行与文件传输，实现“本机统一指挥，远端设备执行”
+
+典型流程：
+
+1. 在 Mac 生成/校验 QuecPython 代码（本 Skill）
+2. 通过 SSH 下发代码到 Windows 工作目录
+3. 由 Windows 执行设备部署、运行、日志回传
+4. 将日志和 JSON 报告回传到 Mac 做归档与判定
+
+开源项目链接：
+
+- [Windows SSH Control Skill](https://github.com/LiteChipCloud/windows-ssh-control-skill)
+
+建议命令编排（示意）：
+
+```bash
+# 1) 本机先做兼容性检查
+python scripts/check_quecpython_compat.py code/
+
+# 2) 通过 SSH 在 Windows 执行设备巡检（示意）
+./scripts/winctl.sh ps "python D:/work/quecpython-dev/scripts/device_smoke_test.py --risk-mode safe --auto-ports --json"
+
+# 3) 回传报告到本机（示意）
+./scripts/winctl.sh copy-from "D:/work/report/device-smoke.json" ./review/device-smoke.json
+```
+
+## 附录 B（推荐）：MCP 与 Skill 协同建议
+
+建议在 Codex 中同时启用：
+
+1. `github` MCP：用于仓库、Issue、Release 与版本治理
+2. `windows-ssh-control` Skill：用于跨机执行与设备链路接管
+3. `quecpython-dev` Skill：用于业务代码与设备流程能力
+
+职责分工：
+
+1. Skill 负责“怎么做”（流程、脚本、规范）
+2. MCP 负责“在哪里做”（远程平台、仓库系统、自动化通道）
+
+这样可以把“代码实现、设备操作、版本发布”整合成闭环。
+
 ## 开源与许可证
 
 1. 本仓库采用 `Apache-2.0`，详见 `LICENSE`
 2. 第三方 stubs 归因与说明详见 `NOTICE` 与 `references/third-party-attribution.md`
+
+## 开源借鉴与协议合规说明
+
+本项目在 `assets/stubs/quecpython_stubs/` 中借鉴并再分发了以下上游项目的接口桩（stubs）资产：
+
+- 上游仓库：[`QuecPython/qpy-vscode-extension`](https://github.com/QuecPython/qpy-vscode-extension)
+- 上游 LICENSE：[`LICENSE`](https://github.com/QuecPython/qpy-vscode-extension/blob/master/LICENSE)
+
+当前合规策略：
+
+1. 保留第三方归因文档：`references/third-party-attribution.md`
+2. 在仓库根目录提供 `NOTICE`
+3. 在仓库根目录提供 `LICENSE`（Apache-2.0）
+4. 在 README 明确标注借鉴来源与链接
+
+基于上述信息，本仓库当前做法与 Apache-2.0 的核心要求（许可文本、归因保留、再分发声明）一致。若后续引入新的第三方文件或修改归因范围，应同步更新 `NOTICE` 与归因文档。
 
 ## 维护信息
 
