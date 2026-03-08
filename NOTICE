@@ -1,0 +1,11 @@
+QuecPython Dev Skill
+
+This distribution includes third-party QuecPython API stubs under:
+  assets/stubs/quecpython_stubs/
+
+Attribution:
+- Source project family: qpy-vscode-extension
+- Imported source folder: snippets/quecpython_stubs/
+- License basis in upstream snapshot: Apache License 2.0
+
+See references/third-party-attribution.md for details.

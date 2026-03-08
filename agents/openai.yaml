@@ -1,0 +1,4 @@
+interface:
+  display_name: "QuecPython Dev"
+  short_description: "QuecPython coding and device operations"
+  default_prompt: "Generate and debug QuecPython device-side code with flashing, deployment, and serial log workflows."
