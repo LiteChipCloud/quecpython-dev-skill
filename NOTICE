@@ -1,0 +1,13 @@
+QuecPython Dev Skill
+
+This distribution includes third-party QuecPython API stubs under:
+  assets/stubs/quecpython_stubs/
+
+Attribution:
+- Source project: https://github.com/QuecPython/qpy-vscode-extension
+- Imported source folder: snippets/quecpython_stubs/
+- Upstream license: https://github.com/QuecPython/qpy-vscode-extension/blob/master/LICENSE
+- Upstream copyright statement:
+  Copyright (c) Quectel Wireless Solution, Co., Ltd.All Rights Reserved.
+
+See references/third-party-attribution.md for details.
