@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Compile Python scripts
+        run: python -m compileall -q scripts
+
+      - name: Verify governance files
+        run: |
+          set -euo pipefail
+          test -f SECURITY.md
+          test -f CONTRIBUTING.md
+          test -f CODE_OF_CONDUCT.md
+          test -f NOTICE
+          test -f LICENSE
+
+      - name: Sensitive content scan
+        run: |
+          set -euo pipefail
+          pattern='(ghp_[A-Za-z0-9]{20,}|glpat-[A-Za-z0-9_-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|gitlab\.lcc\.local|/Users/kingdeng|C:/Users/kingd|D:/litechiptech)'
+          if grep -RInE "$pattern" . --exclude-dir=.git --exclude='.github/workflows/ci.yml' ; then
+            echo "Sensitive content detected."
+            exit 1
+          fi

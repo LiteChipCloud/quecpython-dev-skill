@@ -219,6 +219,13 @@ python scripts/check_quecpython_compat.py code/
 1. 本仓库采用 `Apache-2.0`，详见 `LICENSE`
 2. 第三方 stubs 归因与说明详见 `NOTICE` 与 `references/third-party-attribution.md`
 
+## 社区治理
+
+1. 安全策略：`SECURITY.md`
+2. 贡献指南：`CONTRIBUTING.md`
+3. 社区行为规范：`CODE_OF_CONDUCT.md`
+4. CI 门禁：`.github/workflows/ci.yml`
+
 ## 维护信息
 
 - 维护单位：**芯寰云（上海）科技有限公司**
