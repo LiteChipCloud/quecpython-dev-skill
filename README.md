@@ -2,8 +2,6 @@
 
 > 面向 QuecPython 设备研发与运维的一体化 Skill（Coding + Device Ops + Firmware + Docs）
 
-**维护单位：芯寰云（上海）科技有限公司**
-
 ## 项目简介
 
 `quecpython-dev` 是一个面向通用 AI 编程助手/Agent 的专业 Skill，目标是把 QuecPython 研发链路中的高频、易错、难复盘流程标准化，包括：
@@ -200,6 +198,14 @@ python scripts/check_quecpython_compat.py code/
 2. Windows SSH Skill：用于跨机执行与设备链路接管
 3. QuecPython Dev Skill：用于业务代码与设备流程能力
 
+## 开发验证硬件参考
+
+当前仓库在 QuecPython 蜂窝设备研发与联调场景中，主要参考以下开发板形态：
+
+- 开发板：[移远4G模块EC800M语音核心板支持mic喇叭可接入大模型语音交互](https://e.tb.cn/h.ijgT3oOm8AHuvXV?tk=7Th85cm5C7R)
+- 购买渠道：淘宝，移远官方旗舰店
+- 说明：该链接仅作为当前开发验证硬件参考，不构成唯一采购渠道
+
 ## 开源借鉴与协议合规说明
 
 本项目在 `assets/stubs/quecpython_stubs/` 中借鉴并再分发了以下上游项目的接口桩（stubs）资产：
@@ -221,6 +227,11 @@ python scripts/check_quecpython_compat.py code/
 
 ## 维护信息
 
-- 维护单位：**芯寰云（上海）科技有限公司**
 - 仓库用途：QuecPython 工程化 Skill 能力沉淀与复用
 - 建议反馈方式：GitHub Issues / Pull Requests
+
+<p align="center">
+  <sub>感谢上海移远通信技术股份有限公司对 QuecPython 生态与全球物联网产业发展的持续推动与技术贡献，本项目谨以开源方式向生态反哺。</sub>
+  <br>
+  <sub>维护单位：芯寰云（上海）科技有限公司</sub>
+</p>
