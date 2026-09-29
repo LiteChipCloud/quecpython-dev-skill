@@ -22,6 +22,7 @@ import argparse
 import json
 import re
 import subprocess
+import tempfile
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -155,40 +156,49 @@ def repl_send_lines(
     busy_wait_ms: int = 450,
 ) -> str:
     payload = json.dumps(lines, ensure_ascii=False)
-    here_payload = "\n" + payload + "\n"
-    ps = (
-        "$sp=$null; try {"
-        f" $sp=New-Object System.IO.Ports.SerialPort '{port}',{baud},'None',8,'One';"
-        " $sp.ReadTimeout=1800; $sp.WriteTimeout=1800;"
-        " $sp.DtrEnable=$true; $sp.RtsEnable=$true;"
-        " $sp.Open(); Start-Sleep -Milliseconds 180;"
-        " $sp.DiscardInBuffer(); $sp.DiscardOutBuffer();"
-        " $sp.Write([string][char]3 + [string][char]3 + \"`r`n\");"
-        " Start-Sleep -Milliseconds 150;"
-        " $lines = ConvertFrom-Json @'"
-        + here_payload
-        + "'@;"
-        " foreach($ln in $lines){"
-        f"  $sp.Write([string]$ln + \"`r`n\"); Start-Sleep -Milliseconds {max(10, line_delay_ms)};"
-        " }"
-        f" Start-Sleep -Milliseconds {max(80, settle_ms)};"
-        " $resp=$sp.ReadExisting();"
-        " if($resp){Write-Output ($resp -replace \"`r\",\"<CR>\" -replace \"`n\",\"<LF>\")} else {Write-Output '<empty>'}"
-        "} catch { Write-Output ('ERR: ' + $_.Exception.Message) }"
-        " finally { if($sp -and $sp.IsOpen){ $sp.Close() } }"
-    )
-    retries = max(0, int(busy_retries))
-    wait_ms = max(150, int(busy_wait_ms))
-    last_text = ""
-    for attempt in range(0, retries + 1):
-        cp = run_powershell(ps, timeout=max(10, timeout))
-        text = ((cp.stdout or "") + "\n" + (cp.stderr or "")).strip()
-        last_text = text
-        if not is_port_busy_output(text):
-            return text
-        if attempt < retries:
-            time.sleep(wait_ms / 1000.0)
-    return last_text
+    tmp_path = ""
+    try:
+        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as fp:
+            fp.write(payload)
+            tmp_path = fp.name
+        tmp_path_ps = _escape_ps_sq(tmp_path)
+        ps = (
+            "$sp=$null; try {"
+            f" $sp=New-Object System.IO.Ports.SerialPort '{port}',{baud},'None',8,'One';"
+            " $sp.ReadTimeout=1800; $sp.WriteTimeout=1800;"
+            " $sp.DtrEnable=$true; $sp.RtsEnable=$true;"
+            " $sp.Open(); Start-Sleep -Milliseconds 180;"
+            " $sp.DiscardInBuffer(); $sp.DiscardOutBuffer();"
+            " $sp.Write([string][char]3 + [string][char]3 + \"`r`n\");"
+            " Start-Sleep -Milliseconds 150;"
+            f" $lines = Get-Content -LiteralPath '{tmp_path_ps}' -Raw | ConvertFrom-Json;"
+            " foreach($ln in $lines){"
+            f"  $sp.Write([string]$ln + \"`r`n\"); Start-Sleep -Milliseconds {max(10, line_delay_ms)};"
+            " }"
+            f" Start-Sleep -Milliseconds {max(80, settle_ms)};"
+            " $resp=$sp.ReadExisting();"
+            " if($resp){Write-Output ($resp -replace \"`r\",\"<CR>\" -replace \"`n\",\"<LF>\")} else {Write-Output '<empty>'}"
+            "} catch { Write-Output ('ERR: ' + $_.Exception.Message) }"
+            " finally { if($sp -and $sp.IsOpen){ $sp.Close() } }"
+        )
+        retries = max(0, int(busy_retries))
+        wait_ms = max(150, int(busy_wait_ms))
+        last_text = ""
+        for attempt in range(0, retries + 1):
+            cp = run_powershell(ps, timeout=max(10, timeout))
+            text = ((cp.stdout or "") + "\n" + (cp.stderr or "")).strip()
+            last_text = text
+            if not is_port_busy_output(text):
+                return text
+            if attempt < retries:
+                time.sleep(wait_ms / 1000.0)
+        return last_text
+    finally:
+        if tmp_path:
+            try:
+                Path(tmp_path).unlink()
+            except OSError:
+                pass
 
 
 def qpycom_call(qpycom: str, args: List[str], timeout: int) -> Dict[str, Any]:
