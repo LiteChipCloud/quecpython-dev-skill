@@ -219,7 +219,7 @@ python scripts/check_quecpython_compat.py code/
 
 - 开发板：[移远4G模块EC800M语音核心板支持mic喇叭可接入大模型语音交互](https://e.tb.cn/h.ijgT3oOm8AHuvXV?tk=7Th85cm5C7R)
 - 购买渠道：淘宝「移远官方旗舰店」（天猫品牌直营店）
-- 说明：该链接仅作为当前开发验证硬件参考，不构成唯一采购渠道
+- 说明：该链接仅作为当前开发验证硬件参考，不构成唯一采购渠道；Skill 的兼容性检查、固件管理与设备流程均模组无关，其他 QuecPython 模组同样适用
 
 ## 开源借鉴与协议合规说明
 
