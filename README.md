@@ -214,11 +214,11 @@ python scripts/check_quecpython_compat.py code/
 **EC800X Audio 核心板**（搭载 EC800MCNLE 模块，板载 MIC + 喇叭接口，支持 QuecPython / AT 指令开发）：
 
 <p align="center">
-  <img src="assets/images/quectel-ec800x-audio-board.jpg" alt="EC800X Audio 核心板 — 淘宝移远官方旗舰店" width="380" />
+  <img src="assets/images/quectel-ec800x-audio-board.jpg" alt="EC800X Audio 核心板 — 淘宝移远官方旗舰店" width="360" />&nbsp;&nbsp;<img src="assets/images/quectel-tmall-store.png" alt="移远旗舰店 — 天猫品牌直营店" width="170" />
 </p>
 
 - 开发板：[移远4G模块EC800M语音核心板支持mic喇叭可接入大模型语音交互](https://e.tb.cn/h.ijgT3oOm8AHuvXV?tk=7Th85cm5C7R)
-- 购买渠道：淘宝，移远官方旗舰店
+- 购买渠道：淘宝「移远官方旗舰店」（天猫品牌直营店）
 - 说明：该链接仅作为当前开发验证硬件参考，不构成唯一采购渠道
 
 ## 开源借鉴与协议合规说明
