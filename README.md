@@ -211,6 +211,12 @@ python scripts/check_quecpython_compat.py code/
 
 当前仓库在 QuecPython 蜂窝设备研发与联调场景中，主要参考以下开发板形态：
 
+**EC800X Audio 核心板**（搭载 EC800MCNLE 模块，板载 MIC + 喇叭接口，支持 QuecPython / AT 指令开发）：
+
+<p align="center">
+  <img src="assets/images/quectel-ec800x-audio-board.jpg" alt="EC800X Audio 核心板 — 淘宝移远官方旗舰店" width="380" />
+</p>
+
 - 开发板：[移远4G模块EC800M语音核心板支持mic喇叭可接入大模型语音交互](https://e.tb.cn/h.ijgT3oOm8AHuvXV?tk=7Th85cm5C7R)
 - 购买渠道：淘宝，移远官方旗舰店
 - 说明：该链接仅作为当前开发验证硬件参考，不构成唯一采购渠道
@@ -251,3 +257,16 @@ python scripts/check_quecpython_compat.py code/
   <br>
   <sub>维护单位：芯寰云（上海）科技有限公司</sub>
 </p>
+
+---
+
+## 相关项目：LiteGate CLI
+
+[LiteGate](https://github.com/LiteChipCloud/litegate) 是一站式大模型 API 网关：一个 Key 通吃 Claude / GLM / DeepSeek / MiniMax / Qwen 等 14 款模型，OpenAI 与 Claude 双协议兼容，长期免费模型，全线 1M 上下文。官方 CLI 一条命令即可把 Claude Code / Codex / ZCode / MiniMax Code 等 AI 编程工具全部接上 LiteGate：
+
+```bash
+# 零安装直接用
+npx @litechipcloud/litegate init
+```
+
+安装即用：检测本机 AI 编程工具 → 粘贴 Key → 自动写入配置（增量模式不碰已有配置，自动备份可回滚）。详见 [LiteChipCloud/litegate](https://github.com/LiteChipCloud/litegate)。
