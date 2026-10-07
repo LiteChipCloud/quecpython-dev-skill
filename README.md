@@ -221,6 +221,14 @@ python scripts/check_quecpython_compat.py code/
 - 购买渠道：淘宝「移远官方旗舰店」（天猫品牌直营店）
 - 说明：该链接仅作为当前开发验证硬件参考，不构成唯一采购渠道；Skill 的兼容性检查、固件管理与设备流程均模组无关，其他 QuecPython 模组同样适用
 
+## 官方资源（QuecPython）
+
+| 资源 | 链接 |
+|---|---|
+| QuecPython 官网 | <https://python.quectel.com/> |
+| 文档首页（教程 / API / 例程） | <https://python.quectel.com/doc/> |
+| 开源组织（GitHub） | <https://github.com/QuecPython> |
+
 ## 开源借鉴与协议合规说明
 
 本项目在 `assets/stubs/quecpython_stubs/` 中借鉴并再分发了以下上游项目的接口桩（stubs）资产：
